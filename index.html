@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recomendações de um Desenvolvedor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <button class="theme-toggle" id="themeToggle">🌙 Tema</button>
+    <h1>Recomendações de um Desenvolvedor</h1>
+    <p>Ferramentas e produtos que uso e recomendo — com links da Amazon</p>
+    <div class="filter-menu">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="estacao">💻 Estação</button>
+      <button class="filter-btn" data-filter="livros">📚 Livros</button>
+      <button class="filter-btn" data-filter="ergonomia">🪑 Ergonomia</button>
+      <button class="filter-btn" data-filter="gadgets">🛠️ Gadgets</button>
+    </div>
+  </header>
+
+  <main class="container" id="products-container">
+    <!-- Os produtos serão injetados aqui -->
+  </main>
+
+  <footer class="footer">
+    <p>Links de afiliado — ao comprar por eles você ajuda esse dev! 🙌</p>
+  </footer>
+
+  <script src="produtos.js"></script>
+  <script>
+    const container = document.getElementById("products-container");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    function renderAll(categories) {
+      container.innerHTML = '';
+      for (const [categoria, itens] of Object.entries(categories)) {
+        renderCategory(categoria, itens);
+      }
+    }
+
+    function renderCategory(name, items) {
+      const section = document.createElement("section");
+      section.className = "category";
+      section.dataset.category = name;
+
+      const title = document.createElement("h2");
+      title.textContent = name;
+      section.appendChild(title);
+
+      const grid = document.createElement("div");
+      grid.className = "products";
+
+      items.forEach((item) => {
+        const product = document.createElement("div");
+        product.className = "product";
+        product.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="info">
+            <h3>${item.name}</h3>
+            <a href="${item.link}" target="_blank">Ver na Amazon</a>
+          </div>
+        `;
+        grid.appendChild(product);
+      });
+
+      section.appendChild(grid);
+      container.appendChild(section);
+    }
+
+    function applyFilter(filter) {
+      container.innerHTML = '';
+      if (filter === 'all') {
+        renderAll(PRODUTOS);
+      } else {
+        renderCategory(filter, PRODUTOS[filter] || []);
+      }
+    }
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filterButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        applyFilter(btn.getAttribute("data-filter"));
+      });
+    });
+
+    renderAll(PRODUTOS);
+
+    // 🌙 Tema claro/escuro
+    const toggleBtn = document.getElementById('themeToggle');
+    toggleBtn.addEventListener('click', () => {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    });
+  </script>
+</body>
+</html>
